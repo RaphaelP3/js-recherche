@@ -58,5 +58,63 @@ applyBtn.addEventListener('click', searchAndSort)
 displayProducts(products)
 
 
+//PAGINATION
+
+const text = document.getElementById('text')
+const pagination = document.getElementById('pagination')
 
 
+//on récupère tout le texte initial
+const fullText = text.textContent.trim()
+
+//on découpe en mots pour éviter de couper les mots au milieu
+const words = fullText.split(/\s+/)
+
+//nb de mots par page
+const wordsPerPage = 300
+
+const totalPages = Math.ceil(words.length / wordsPerPage)
+let currentPage = 1
+
+
+// fonction qui affiche la page précise du texte
+function showPage(page) {
+    if (page < 1) page = 1
+    if (page > totalPages) page = totalPages
+
+    currentPage = page
+
+    const start = (currentPage - 1) * wordsPerPage
+    const end = start + wordsPerPage
+    const pageWords = words.slice(start, end)
+
+    text.textContent = pageWords.join(' ')
+
+    renderPagination()
+}
+
+function renderPagination() {
+    pagination.innerHTML = ''
+
+    // btn précedent
+    const prevBtn = document.createElement('button')
+    prevBtn.textContent = '← Précédent'
+    prevBtn.disabled = currentPage === 1
+    prevBtn.onclick = () => showPage(currentPage - 1)
+    pagination.appendChild(prevBtn)
+
+
+    // éviter afficher toutes les numéros des pages
+    const info = document.createElement('span')
+    info.textContent = `Page ${currentPage} / ${totalPages}`
+    pagination.appendChild(info)
+
+    // btn page suivante
+    const nextBtn = document.createElement('button')
+    nextBtn.textContent = 'Suivant →'
+    nextBtn.disabled = currentPage === totalPages
+    nextBtn.onclick = () => showPage(currentPage + 1)
+    pagination.appendChild(nextBtn)
+}
+
+showPage(1)
